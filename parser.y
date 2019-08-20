@@ -72,12 +72,12 @@ struct Operador * VAL;
 %token<TEXT> BF
 %token<TEXT> FF
 %token<TEXT> WF
-%token<TEXT> k
-%token<TEXT> m
-%token<TEXT> b
-%token<TEXT> p
-%token<TEXT> e
-%token<TEXT> l
+%token<TEXT> kilo
+%token<TEXT> mega
+%token<TEXT> byte
+%token<TEXT> primaria
+%token<TEXT> extendida
+%token<TEXT> logica
 %token<TEXT> fast
 %token<TEXT> full
 
@@ -117,7 +117,7 @@ MK : MK guion MKK
 MKK : size igual num
     |fit igual FIT
     |unit igual UN
-    |path igual CADS
+    |path igual CADS{cout << "HEHE" << endl;}
     |type igual TY
     |borrar igual DE
     |name igual CADS
@@ -134,14 +134,14 @@ FIT : BF
     |WF
 ;
 
-UN : k
-    |m
-    |b
+UN : kilo
+    |mega
+    |byte
 ;
 
-TY : p
-    |e
-    |l
+TY : primaria
+    |extendida
+    |logica
 ;
 
 DE : fast

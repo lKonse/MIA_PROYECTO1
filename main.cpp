@@ -8,9 +8,9 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    FILE* input = fopen("/home/pablorocad/Escritorio/operacion.txt", "r");
+    /*FILE* input = fopen("/home/pablorocad/Escritorio/operacion.txt", "r");
         yyrestart(input);
-        yyparse();
+        yyparse();*/
 
     return a.exec();
 }

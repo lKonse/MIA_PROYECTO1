@@ -10,8 +10,8 @@ letra [a-zñA-ZÑ]
 digito [0-9]
 numero {digito}+
 identificador {letra}[{letra} | {numero}]*
-ruta "/"[^'/']*"/"
-
+ruta \/[^".disk"][".disk" \/]
+espacioBlanco [ \t\n]+
 
 %%
 "mkdisk"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return mkdisk; }
@@ -33,19 +33,19 @@ ruta "/"[^'/']*"/"
 "BF"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return BF; }
 "FF"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return FF; }
 "WF"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return WF; }
-"k"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return k; }
-"m"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return m; }
-"b"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return b; }
-"p"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return p; }
-"e"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return e; }
-"l"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return l; }
+"k"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return kilo; }
+"m"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return mega; }
+"b"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return byte; }
+"p"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return primaria; }
+"e"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return extendida; }
+"l"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return logica; }
 "fast"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return fast; }
 "full"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return full; }
 
 [=]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return igual; }
 [-]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return guion; }
 [\"]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return comillas; }
-[[:blank:]]     { /*Se ignoran*/ }
+{espacioBlanco}     { /*Se ignoran*/ }
 {ruta}  { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return ruta; }
 {identificador}          { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return identificador; }
 {numero}        { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return num; }

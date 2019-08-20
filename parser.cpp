@@ -83,7 +83,7 @@ extern char *yytext; //lexema actual donde esta el parser (analisis lexico) lo m
 int yyerror(const char* mens){
 //metodo que se llama al haber un error sintactico
 //SE IMPRIME EN CONSOLA EL ERROR
-std::cout <<mens<<" "<<yytext<< std::endl;
+std::cout <<mens<<" "<<yytext<<std::endl;
 return 0;
 }
 
@@ -163,12 +163,12 @@ extern int yydebug;
     BF = 281,
     FF = 282,
     WF = 283,
-    k = 284,
-    m = 285,
-    b = 286,
-    p = 287,
-    e = 288,
-    l = 289,
+    kilo = 284,
+    mega = 285,
+    byte = 286,
+    primaria = 287,
+    extendida = 288,
+    logica = 289,
     fast = 290,
     full = 291
   };
@@ -518,9 +518,9 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "igual", "guion", "comillas", "espacio",
   "ruta", "identificador", "num", "mkdisk", "rmdisk", "fdisk", "mount",
   "unmount", "rep", "exec", "size", "fit", "unit", "path", "type",
-  "borrar", "name", "add", "id", "BF", "FF", "WF", "k", "m", "b", "p", "e",
-  "l", "fast", "full", "$accept", "INITIAL", "S", "CO", "MK", "MKK",
-  "CADS", "FIT", "UN", "TY", "DE", YY_NULLPTR
+  "borrar", "name", "add", "id", "BF", "FF", "WF", "kilo", "mega", "byte",
+  "primaria", "extendida", "logica", "fast", "full", "$accept", "INITIAL",
+  "S", "CO", "MK", "MKK", "CADS", "FIT", "UN", "TY", "DE", YY_NULLPTR
 };
 #endif
 
@@ -1325,8 +1325,14 @@ yyreduce:
 #line 1326 "parser.cpp" /* yacc.c:1646  */
     break;
 
+  case 17:
+#line 120 "parser.y" /* yacc.c:1646  */
+    {cout << "HEHE" << endl;}
+#line 1332 "parser.cpp" /* yacc.c:1646  */
+    break;
 
-#line 1330 "parser.cpp" /* yacc.c:1646  */
+
+#line 1336 "parser.cpp" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

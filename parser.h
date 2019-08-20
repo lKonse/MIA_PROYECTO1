@@ -71,12 +71,12 @@ extern int yydebug;
     BF = 281,
     FF = 282,
     WF = 283,
-    k = 284,
-    m = 285,
-    b = 286,
-    p = 287,
-    e = 288,
-    l = 289,
+    kilo = 284,
+    mega = 285,
+    byte = 286,
+    primaria = 287,
+    extendida = 288,
+    logica = 289,
     fast = 290,
     full = 291
   };

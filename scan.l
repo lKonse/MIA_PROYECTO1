@@ -1,4 +1,5 @@
 %option noyywrap
+%option caseless
 %{
 #include "parser.h"
 #include <iostream>
@@ -6,22 +7,47 @@
 int columna=0;
 %}
 letra [a-zñA-ZÑ]
-comentario "/*"[^'*']*"*/"
 digito [0-9]
-iden {letra}+
-Numero {digito}+
+numero {digito}+
+identificador {letra}[{letra} | {numero}]*
+ruta "/"[^'/']*"/"
+
+
 %%
-"print"         { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return print; }
-[+]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return mas; }
-[-]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return menos; }
-[*]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return por; }
+"mkdisk"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return mkdisk; }
+"rmdisk"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return rmdisk; }
+"fdisk"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return fdisk; }
+"mount"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return mount; }
+"unmount"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return unmount; }
+"rep"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return rep; }
+"exec"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return exec; }
+"size"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return size; }
+"fit"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return fit; }
+"unit"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return unit; }
+"path"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return type; }
+"type"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return type; }
+"delete"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return borrar; }
+"name"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return name; }
+"add"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return add; }
+"id"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return id; }
+"BF"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return BF; }
+"FF"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return FF; }
+"WF"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return WF; }
+"k"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return k; }
+"m"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return m; }
+"b"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return b; }
+"p"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return p; }
+"e"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return e; }
+"l"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return l; }
+"fast"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return fast; }
+"full"    { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return full; }
+
 [=]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return igual; }
-[;]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return coma; }
-[(]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return aparen; }
-[)]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return cparen; }
-{iden}          { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return Niden; }
-{Numero}        { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return Nnum; }
-{comentario}    { /*Se ignoran*/ }
+[-]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return guion; }
+[\"]             { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return comillas; }
 [[:blank:]]     { /*Se ignoran*/ }
+{ruta}  { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return ruta; }
+{identificador}          { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return identificador; }
+{numero}        { columna=columna+strlen(yylval.TEXT); strcpy(yylval.TEXT, yytext); return num; }
 .               {std::cout <<yytext<<"Error Lexico "<< std::endl;}
 %%

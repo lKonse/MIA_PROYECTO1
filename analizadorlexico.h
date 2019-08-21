@@ -13,6 +13,8 @@ public:
     string token;
 
     void analizar(string t);
+    void ejecutar();
+    void crearDisco(string size, string path, string fit, string unit);
 };
 
 #endif // ANALIZADORLEXICO_H

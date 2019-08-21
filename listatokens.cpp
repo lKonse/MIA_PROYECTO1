@@ -10,7 +10,7 @@ listaTokens::listaTokens()
 void listaTokens::add(string v)
 {
   Nodo *nuevo = new Nodo(v);
-  if(head != 0){
+  if(estaVacia()){
     head = nuevo;
     cola = nuevo;
   }else{
@@ -31,4 +31,9 @@ string listaTokens::get(int n)
         }
     }
     return temp->getValor();
+}
+
+bool listaTokens::estaVacia()
+{
+    return head == 0;
 }

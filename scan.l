@@ -10,7 +10,7 @@ letra [a-zñA-ZÑ]
 digito [0-9]
 numero {digito}+
 identificador {letra}[{letra} | {numero}]*
-ruta \/[^".disk"][".disk" \/]
+ruta "/"[^".disk"]+
 espacioBlanco [ \t\n]+
 
 %%

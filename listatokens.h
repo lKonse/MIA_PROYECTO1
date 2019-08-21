@@ -11,6 +11,7 @@ public:
     listaTokens();
     void add(string v);
     string get(int n);
+    bool estaVacia();
     int tam = 0;
     Nodo *head, *cola;
 

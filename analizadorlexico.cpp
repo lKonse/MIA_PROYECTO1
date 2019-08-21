@@ -5,11 +5,22 @@
 #include <stdlib.h>
 
 
+typedef struct datosParticion{
+  char* status;
+  char* type;
+  char* fit;
+  int start;
+  int size;
+  char name[16];
+}PARTITION;
+
 typedef struct datosDisco{
     int tamanio;
     char* fecha;
-    //char fit[1];
-}DATOSDISCO;
+    int signature;
+    char fitDisco;
+    PARTITION part[4];
+}MBR;
 
 
 analizadorLexico::analizadorLexico()
@@ -21,26 +32,47 @@ analizadorLexico::analizadorLexico()
 void analizadorLexico::crearDisco(string size, string path, string fit, string unit)
 {
     char comando[500];
+    char comando2[500];
     char tamanio[1024];
     int tam = 0;
-    int n = atoi(size.c_str());
 
 
-        memset(&comando[0], 0, sizeof(comando));
+    int MBRsize = atoi(size.c_str());
+
+    time_t now = time(0);
+    char* MBRdt = ctime(&now);//tomamos la fecha y hora
+
+    int MBRsignature = rand()%10000;
+
+    char MBRfit;
+    if(fit == "BF"){
+      MBRfit = 'B';
+    }else if(fit == "FF" || fit == ""){
+      MBRfit = 'F';
+    }else if (fit == "WF") {
+        MBRfit = 'W';
+    }
+
+
+        memset(&comando[0], 0, sizeof(comando));//limpiamos variables
+        memset(&comando2[0], 0, sizeof(comando2));//limpiamos variables
         memset(&tamanio[0], 0, sizeof(tamanio));
-        strcat(comando, "dd if=/dev/zero of=");
+        strcat(comando, "dd if=/dev/zero of=");//seteamos de ceros el archivo
+        strcat(comando2, "dd if=/dev/zero of=");//seteamos de ceros el archivo
 
         tam = path.size() + 1;
         char tempPath[tam];
         strcpy(tempPath, path.c_str());
-
         strcat(comando, tempPath);//escribirmos la direccion
 
         if(unit == "" || unit == "m" || unit == "M")
         {
+            MBRsize = MBRsize*1024*1024;
+
             strcat(comando, " bs=1MB count=");
         }else if(unit == "k" || unit == "K")
         {
+            MBRsize = MBRsize*1024;
             strcat(comando, " bs=1024 count=");
         }
 
@@ -49,24 +81,62 @@ void analizadorLexico::crearDisco(string size, string path, string fit, string u
         strcpy(tempSize, size.c_str());
 
         strcat(comando, tempSize);//tamaño del disco (archivo)
-        system(comando);//creamos el disco
+        system(comando);//creamos el disco----------------------------
 
-        time_t now = time(0);
-        char* dt = ctime(&now);//tomamos la fecha y hora
-
-        DATOSDISCO disco;
+        MBR disco;
         char aux[500];
         memset(&aux[0], 0, sizeof(aux));
         strcat(aux, tempPath);
 
-        FILE* escritor = fopen(aux, "rb+");
-        fseek(escritor, 0, SEEK_SET);
-        disco.tamanio = n;
-        //disco.fecha = dt;
 
-        fwrite(&disco, sizeof(DATOSDISCO), 1, escritor);
+        FILE* escritor = fopen(aux, "rb+");//rb+ funcion para abrir un archivo binario en escritura y lectura
+        fseek(escritor, 0, SEEK_SET);//seteamos desde la posicion 0 la informacion
+        disco.tamanio = MBRsize;
+        disco.fecha = MBRdt;
+        disco.signature = MBRsignature;
+        disco.fitDisco = MBRfit;
+        fwrite(&disco, sizeof(MBR), 1, escritor);//Escribo las estructuras en el archivo
         fclose(escritor);
 
+        /*fclose(escritor);
+        //escribir algo nuevo----------------------------------------------------------------------------------------
+
+        MBR temp;//DELCARO ESTRUCTURA
+        fseek(escritor, 0, SEEK_SET);//nos posicionamos la inicio
+        fread(&temp, sizeof(MBR), 1, escritor);//obtengo la estructura (datos)
+        temp.signature = 8200;//nuevo elemento
+        fseek(escritor, 0, SEEK_SET);
+        fwrite(&temp, sizeof(MBR), 1, escritor);
+
+
+
+
+        //Mostrar datos---------------------------------------
+        MBR d;
+        fseek(escritor, 0, SEEK_SET);
+        // fread sera la herramienta para obtener los datos y los parametros son los mismos que el fwrite
+        fread(&d, sizeof(MBR), 1, escritor);
+        printf("------------------------------\n");
+        printf(" tamanio: %d\n", d.tamanio);
+        printf(" time: %s\n", d.fecha);
+        printf(" asignature: %d\n", d.signature);
+        printf(" fit: %c\n", d.fitDisco);
+        printf("------------------------------\n");*/
+
+}
+
+void analizadorLexico::eliminarDisco(string path)
+{
+    int tam = path.size() + 1;
+    char tempPath[tam];
+    strcpy(tempPath, path.c_str());
+
+    if(remove(tempPath) == 0)
+    {
+      cout << "Disco eliminado" << endl;
+    }else{
+      cout << "ERROR: No existe el disco" << endl;
+    }
 }
 
 void analizadorLexico::ejecutar()
@@ -81,6 +151,7 @@ void analizadorLexico::ejecutar()
 
         if(comando == "mkdisk")
         {
+            elemento = "";
             n = x+1;
             while(elemento != "NUEVO")
             {
@@ -103,8 +174,25 @@ void analizadorLexico::ejecutar()
                 n++;
             }
 
+            string pathRa = path;
+            pathRa.replace(pathRa.size()-5, 5, "_ra1.disk");
             crearDisco(size, path, fit, unit);
+            crearDisco(size, pathRa, fit, unit);
 
+        }else if(comando == "rmdisk"){
+          elemento = "";
+          n = x+1;
+          while(elemento != "NUEVO")
+          {
+              elemento = lista->get(n);
+
+              if(elemento == "-path")
+              {
+                  path = lista->get(n+2);
+              }
+              n++;
+          }
+          eliminarDisco(path);
         }
     }
 }

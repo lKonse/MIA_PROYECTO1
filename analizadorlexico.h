@@ -15,6 +15,7 @@ public:
     void analizar(string t);
     void ejecutar();
     void crearDisco(string size, string path, string fit, string unit);
+    void eliminarDisco(string path);
 };
 
 #endif // ANALIZADORLEXICO_H

@@ -6,9 +6,9 @@
 
 
 typedef struct datosParticion{
-  char* status;
-  char* type;
-  char* fit;
+  char status;
+  char type;
+  char fit;
   int start;
   int size;
   char name[16];
@@ -26,6 +26,7 @@ typedef struct datosDisco{
 analizadorLexico::analizadorLexico()
 {
     lista = new listaTokens();
+    listaMontar = new listaMount();
     token = "";
 }
 
@@ -95,7 +96,12 @@ void analizadorLexico::crearDisco(string size, string path, string fit, string u
         disco.fecha = MBRdt;
         disco.signature = MBRsignature;
         disco.fitDisco = MBRfit;
+
         fwrite(&disco, sizeof(MBR), 1, escritor);//Escribo las estructuras en el archivo
+
+        MBR d;
+        fseek(escritor, 0, SEEK_SET);
+
         fclose(escritor);
 
         /*fclose(escritor);
@@ -139,6 +145,103 @@ void analizadorLexico::eliminarDisco(string path)
     }
 }
 
+void analizadorLexico::crearParticion(string size, string fit, string unit, string path, string type,
+  string borrar, string name, string add)
+{
+  if(borrar == "")
+  {
+    char PARTstatus = '0';
+    char PARTtype;
+    if(type == "P" || type == "p" || type == ""){
+      PARTtype = 'P';
+    }else if(type == "E" || type == "e"){
+      PARTtype = 'E';
+    }else if (type == "L" || type == "l") {
+        PARTtype = 'L';
+    }
+
+    int PARTsize = atoi(size.c_str());
+    if(unit == "m" || unit == "M")
+    {
+        PARTsize = PARTsize*1024*1024;
+    }else if(unit == "k" || unit == "K" || unit == "")
+    {
+        PARTsize = PARTsize*1024;
+    }else if(unit == "b" || unit == "B")
+    {
+        PARTsize = PARTsize;
+    }
+
+    char PARTfit;
+    if(fit == "BF"){
+      PARTfit = 'B';
+    }else if(fit == "FF" || fit == ""){
+      PARTfit = 'F';
+    }else if (fit == "WF") {
+        PARTfit = 'W';
+    }
+
+
+    PARTITION particion;
+    particion.status = PARTstatus;
+    particion.type = PARTtype;
+    particion.fit = PARTfit;
+    particion.size = PARTsize;
+    strcpy(particion.name, name.c_str());
+
+    int tam = path.size() + 1;
+    char tempPath[tam];
+    strcpy(tempPath, path.c_str());
+
+    char aux[500];
+    memset(&aux[0], 0, sizeof(aux));
+    strcat(aux, tempPath);
+
+    FILE* escritor = fopen(aux, "rb+");
+
+    MBR temp;//DELCARO ESTRUCTURA
+    fseek(escritor, 0, SEEK_SET);//nos posicionamos la inicio
+    fread(&temp, sizeof(MBR), 1, escritor);//obtengo la estructura (datos)
+
+    for(int x = 0; x < 4; x++)
+    {
+      if(temp.part[x].size == 0)
+      {
+        temp.part[x] = particion;//nuevo elemento
+        break;
+      }
+    }
+    fseek(escritor, 0, SEEK_SET);
+    fwrite(&temp, sizeof(MBR), 1, escritor);
+
+    MBR d;
+    PARTITION d2;
+    fseek(escritor, 0, SEEK_SET);
+    // fread sera la herramienta para obtener los datos y los parametros son los mismos que el fwrite
+    fread(&d, sizeof(MBR), 1, escritor);
+    printf("------------------------------\n");
+    printf(" tamanio: %d\n", d.tamanio);
+    printf(" time: %s\n", d.fecha);
+    printf(" asignature: %d\n", d.signature);
+    printf(" fit: %c\n", d.fitDisco);
+    for(int x = 0; x < 4; x++)
+    {
+      d2 = d.part[x];
+      printf(" name: %s\n", d2.name);
+    }
+    printf("------------------------------\n");
+
+    fclose(escritor);
+  }else{
+
+  }
+}
+
+void analizadorLexico::montar(string path, string name)
+{
+  listaMontar->add(path, name);
+}
+
 void analizadorLexico::ejecutar()
 {
     string comando = "", elemento = "";
@@ -151,6 +254,7 @@ void analizadorLexico::ejecutar()
 
         if(comando == "mkdisk")
         {
+            size = ""; path = ""; fit = ""; unit = ""; type = ""; borrar = ""; name = ""; add = ""; id = "";
             elemento = "";
             n = x+1;
             while(elemento != "NUEVO")
@@ -180,6 +284,7 @@ void analizadorLexico::ejecutar()
             crearDisco(size, pathRa, fit, unit);
 
         }else if(comando == "rmdisk"){
+          size = ""; path = ""; fit = ""; unit = ""; type = ""; borrar = ""; name = ""; add = ""; id = "";
           elemento = "";
           n = x+1;
           while(elemento != "NUEVO")
@@ -193,6 +298,66 @@ void analizadorLexico::ejecutar()
               n++;
           }
           eliminarDisco(path);
+        }else if(comando == "fdisk"){
+          size = ""; path = ""; fit = ""; unit = ""; type = ""; borrar = ""; name = ""; add = ""; id = "";
+          elemento = "";
+          n = x+1;
+          while(elemento != "NUEVO")
+          {
+            elemento = lista->get(n);
+
+            if(elemento == "-size")
+            {
+                size = lista->get(n+2);
+            }else if(elemento == "-fit")
+            {
+                fit = lista->get(n+2);
+            }else if(elemento == "-unit")
+            {
+                unit = lista->get(n+2);
+            }else if(elemento == "-path")
+            {
+                path = lista->get(n+2);
+            }else if(elemento == "-type")
+            {
+                type = lista->get(n+2);
+            }else if(elemento == "-delete")
+            {
+                borrar = lista->get(n+2);
+            }else if(elemento == "-name")
+            {
+                name = lista->get(n+2);
+            }else if(elemento == "-add")
+            {
+                add = lista->get(n+2);
+            }
+            n++;
+          }
+
+          string pathRa = path;
+          pathRa.replace(pathRa.size()-5, 5, "_ra1.disk");
+          crearParticion(size, fit, unit, path, type, borrar, name, add);
+          crearParticion(size, fit, unit, pathRa, type, borrar, name, add);
+        }else if(comando == "mount"){
+          size = ""; path = ""; fit = ""; unit = ""; type = ""; borrar = ""; name = ""; add = ""; id = "";
+          elemento = "";
+          n = x+1;
+          while(elemento != "NUEVO")
+          {
+            elemento = lista->get(n);
+            if(elemento == "-path")
+            {
+                path = lista->get(n+2);
+            }else if(elemento == "-name")
+            {
+              name = lista->get(n+2);
+            }
+
+            n++;
+          }
+          montar(path, name);
+        }else if(comando == "rep"){
+
         }
     }
 }
@@ -307,10 +472,10 @@ void analizadorLexico::analizar(string t)
 
         }
 
-        for(int x = 0; x < lista->tam; x++)
+        /*for(int x = 0; x < lista->tam; x++)
         {
           cout << lista->get(x)<< endl;
-        }
+        }*/
 
         ejecutar();
 

@@ -16,9 +16,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         analizadorlexico.cpp \
+        listamount.cpp \
+        listapath.cpp \
         listatokens.cpp \
         main.cpp \
         nodo.cpp \
+        nodomount.cpp \
+        nodopath.cpp \
         parser.cpp \
         scanner.cpp
 
@@ -29,8 +33,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     analizadorlexico.h \
+    listamount.h \
+    listapath.h \
     listatokens.h \
     nodo.h \
+    nodomount.h \
+    nodopath.h \
     parser.h \
     parser.y \
     scan.l \

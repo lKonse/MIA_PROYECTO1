@@ -6,6 +6,7 @@
 #include "analizadorlexico.h"
 #include <iostream>
 #include <cstring>
+#include "listamount.h"
 
 //extern int yyrestart( FILE* archivo);
 //extern int yyparse();
@@ -32,8 +33,36 @@ int main(int argc, char *argv[])
             analizadorLexico *analizador = new analizadorLexico();
             analizador->analizar(archivo);
 
+    /*listaMount *lista = new listaMount();
+    lista->add("P1","N1");
+    lista->add("P2","N2");
+    lista->add("P3","N3");
+    lista->add("P4","N4");
+    lista->add("P5","N5");
+    lista->add("P6","N6");
+    lista->add("P7","N7");
 
-        /*string st1 = "/home/pablorocad/Escritorio/disco1.disk";
+    for(int x = 0; x < lista->tam; x++)
+    {
+        cout << lista->get(x).name << endl;
+    }
+
+    lista->borrar(0);
+    lista->borrar(3);
+    lista->borrar(4);
+    lista->borrar(2);
+    cout << "" << endl;
+    cout << "" << endl;
+
+    for(int x = 0; x < lista->tam; x++)
+    {
+        cout << lista->get(x).name << endl;
+    }
+
+
+
+
+        string st1 = "/home/pablorocad/Escritorio/disco1.disk";
         st1.replace(st1.size()-5, 5, "_ra1.disk");
         cout<<st1<<endl;
 
